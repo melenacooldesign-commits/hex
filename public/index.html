@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MWS AI · Hex Render</title>
+<title>MWS AI · Hex Render v.03</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -41,24 +41,12 @@
     gap: 12px;
   }
 
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
+  .brand { display: flex; align-items: center; gap: 12px; }
   .brand-cube { width: 18px; height: 18px; flex-shrink: 0; }
   .brand-name { font-weight: 500; font-size: 13px; letter-spacing: -0.2px; }
   .brand-divider { width: 1px; height: 14px; background: var(--ink-20); }
 
-  .tool-name {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: var(--ink-60);
-  }
-
-  .topbar-meta {
+  .tool-name, .topbar-meta {
     font-family: var(--mono);
     font-size: 10px;
     letter-spacing: 2px;
@@ -67,8 +55,7 @@
 
   .status-dot {
     display: inline-block;
-    width: 6px;
-    height: 6px;
+    width: 6px; height: 6px;
     border-radius: 50%;
     background: var(--signal);
     margin-right: 6px;
@@ -80,10 +67,7 @@
     50% { opacity: 1; transform: scale(1); }
   }
 
-  .main {
-    display: grid;
-    grid-template-columns: 280px 1fr;
-  }
+  .main { display: grid; grid-template-columns: 300px 1fr; }
 
   .sidebar {
     background: var(--paper);
@@ -91,7 +75,9 @@
     padding: 24px 20px;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 22px;
+    max-height: calc(100vh - 56px);
+    overflow-y: auto;
   }
 
   .section-label {
@@ -107,8 +93,7 @@
 
   .section-label::before {
     content: '';
-    width: 4px;
-    height: 4px;
+    width: 4px; height: 4px;
     background: var(--ink);
     display: inline-block;
   }
@@ -140,8 +125,7 @@
   .btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
   .btn-icon {
-    width: 14px;
-    height: 14px;
+    width: 14px; height: 14px;
     border-radius: 50%;
     background: #fff;
     display: flex;
@@ -160,15 +144,12 @@
   .btn-secondary .btn-icon { background: var(--ink); }
 
   .control { display: flex; flex-direction: column; gap: 8px; }
-
   .control-header {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
   }
-
   .control-label { font-size: 12px; }
-
   .control-value {
     font-family: var(--mono);
     font-size: 11px;
@@ -188,8 +169,7 @@
   input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 14px;
-    height: 14px;
+    width: 14px; height: 14px;
     border-radius: 50%;
     background: var(--ink);
     cursor: pointer;
@@ -198,8 +178,7 @@
   }
 
   input[type="range"]::-moz-range-thumb {
-    width: 14px;
-    height: 14px;
+    width: 14px; height: 14px;
     border-radius: 50%;
     background: var(--ink);
     cursor: pointer;
@@ -207,11 +186,9 @@
     box-shadow: 0 0 0 1px var(--ink);
   }
 
-  .tone-toggle, .shape-toggle { display: grid; gap: 6px; }
-  .tone-toggle { grid-template-columns: 1fr 1fr; }
-  .shape-toggle { grid-template-columns: 1fr 1fr 1fr; gap: 4px; }
+  .tone-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 
-  .tone-btn, .shape-btn {
+  .tone-btn {
     appearance: none;
     background: transparent;
     border: 0.5px solid var(--ink-40);
@@ -222,24 +199,14 @@
     cursor: pointer;
     color: var(--ink-60);
     transition: all 0.15s ease;
-  }
-
-  .tone-btn {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 6px;
   }
 
-  .shape-btn {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 1px;
-    padding: 8px 4px;
-  }
-
-  .tone-btn:hover, .shape-btn:hover { border-color: var(--ink); color: var(--ink); }
-  .tone-btn.active, .shape-btn.active {
+  .tone-btn:hover { border-color: var(--ink); color: var(--ink); }
+  .tone-btn.active {
     background: var(--ink);
     border-color: var(--ink);
     color: #fff;
@@ -247,6 +214,34 @@
 
   .tone-swatch { display: flex; gap: 2px; }
   .tone-swatch span { width: 8px; height: 8px; border-radius: 50%; }
+
+  .preset-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  .preset-btn {
+    appearance: none;
+    background: transparent;
+    border: 0.5px solid var(--ink-40);
+    border-radius: 6px;
+    padding: 8px 6px;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    color: var(--ink-60);
+    transition: all 0.15s ease;
+  }
+  .preset-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+  .hint {
+    font-size: 11px;
+    color: var(--ink-60);
+    line-height: 1.45;
+    margin-top: 4px;
+  }
 
   .canvas-area {
     background: var(--paper);
@@ -282,52 +277,34 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: background 0.2s ease;
   }
+
+  .canvas-stage.bg-dark { background: #0a0a0a; }
 
   .canvas-corner {
     position: absolute;
-    width: 12px;
-    height: 12px;
+    width: 12px; height: 12px;
     border-color: var(--ink);
     border-style: solid;
     border-width: 0;
     pointer-events: none;
     z-index: 5;
+    transition: border-color 0.2s ease;
   }
+  .canvas-stage.bg-dark .canvas-corner { border-color: rgba(255,255,255,0.4); }
 
   .canvas-corner.tl { top: 8px; left: 8px; border-top-width: 0.5px; border-left-width: 0.5px; }
   .canvas-corner.tr { top: 8px; right: 8px; border-top-width: 0.5px; border-right-width: 0.5px; }
   .canvas-corner.bl { bottom: 8px; left: 8px; border-bottom-width: 0.5px; border-left-width: 0.5px; }
   .canvas-corner.br { bottom: 8px; right: 8px; border-bottom-width: 0.5px; border-right-width: 0.5px; }
 
-  #render-canvas {
-    display: block;
-    max-width: 100%;
-    height: auto;
-  }
+  #render-canvas { display: block; max-width: 100%; height: auto; }
 
   .empty-state { text-align: center; padding: 40px 20px; }
-
-  .empty-cube {
-    width: 56px;
-    height: 56px;
-    margin: 0 auto 20px;
-    opacity: 0.6;
-  }
-
-  .empty-state h2 {
-    font-size: 16px;
-    font-weight: 500;
-    margin-bottom: 6px;
-    letter-spacing: -0.3px;
-  }
-
-  .empty-state p {
-    font-size: 13px;
-    color: var(--ink-60);
-    margin-bottom: 20px;
-    line-height: 1.5;
-  }
+  .empty-cube { width: 56px; height: 56px; margin: 0 auto 20px; opacity: 0.6; }
+  .empty-state h2 { font-size: 16px; font-weight: 500; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .empty-state p { font-size: 13px; color: var(--ink-60); margin-bottom: 20px; line-height: 1.5; }
 
   .empty-cta {
     display: inline-flex;
@@ -343,7 +320,6 @@
     border: none;
     font-family: var(--sans);
   }
-
   .empty-cta:hover { opacity: 0.85; }
 
   .canvas-stage.drag-over::after {
@@ -369,7 +345,6 @@
     flex-wrap: wrap;
     gap: 8px;
   }
-
   .footer-meta { display: flex; gap: 24px; flex-wrap: wrap; }
 
   #file-input { display: none; }
@@ -383,19 +358,16 @@
     background: rgba(255,255,255,0.7);
     z-index: 10;
   }
-
+  .canvas-stage.bg-dark .loading-overlay { background: rgba(10,10,10,0.7); }
   .loading-overlay.active { display: flex; }
-
   .loading-dots { display: flex; gap: 6px; }
-
   .loading-dots span {
-    width: 6px;
-    height: 6px;
+    width: 6px; height: 6px;
     border-radius: 50%;
     background: var(--ink);
     animation: pulse 1.2s ease-in-out infinite;
   }
-
+  .canvas-stage.bg-dark .loading-dots span { background: #fff; }
   .loading-dots span:nth-child(2) { animation-delay: 0.15s; }
   .loading-dots span:nth-child(3) { animation-delay: 0.3s; }
 
@@ -406,7 +378,11 @@
 
   @media (max-width: 760px) {
     .main { grid-template-columns: 1fr; }
-    .sidebar { border-right: none; border-bottom: 0.5px solid var(--ink-20); }
+    .sidebar {
+      border-right: none;
+      border-bottom: 0.5px solid var(--ink-20);
+      max-height: none;
+    }
   }
 </style>
 </head>
@@ -423,7 +399,7 @@
     </svg>
     <span class="brand-name">mws ai</span>
     <span class="brand-divider"></span>
-    <span class="tool-name">HEX RENDER · v.02</span>
+    <span class="tool-name">HEX RENDER · v.03</span>
   </div>
   <div class="topbar-meta">
     <span><span class="status-dot"></span>SIGNAL READY</span>
@@ -454,7 +430,32 @@
     </section>
 
     <section>
-      <div class="section-label"><span class="section-num">[02]</span> ТОН</div>
+      <div class="section-label"><span class="section-num">[02]</span> ПРЕСЕТ</div>
+      <div class="preset-row">
+        <button class="preset-btn" data-preset="poster" type="button">ПЛАКАТ</button>
+        <button class="preset-btn" data-preset="icon" type="button">ИКОНКА</button>
+        <button class="preset-btn" data-preset="portrait" type="button">ПОРТРЕТ</button>
+        <button class="preset-btn" data-preset="reset" type="button">СБРОС</button>
+      </div>
+      <p class="hint">Плакат — крупно, контрастно. Иконка — для flat-силуэтов. Портрет — мягкие градации.</p>
+    </section>
+
+    <section>
+      <div class="section-label"><span class="section-num">[03]</span> ФОН</div>
+      <div class="tone-toggle" id="bg-toggle">
+        <button class="tone-btn" data-bg="light" type="button">
+          <span class="tone-swatch"><span style="background:#ffffff;border:0.5px solid #ccc"></span></span>
+          Светлый
+        </button>
+        <button class="tone-btn active" data-bg="dark" type="button">
+          <span class="tone-swatch"><span style="background:#0a0a0a"></span></span>
+          Тёмный
+        </button>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label"><span class="section-num">[04]</span> ТОН</div>
       <div class="tone-toggle">
         <button class="tone-btn active" data-tone="mono" type="button">
           <span class="tone-swatch"><span style="background:#101412"></span></span>
@@ -468,56 +469,80 @@
     </section>
 
     <section>
-      <div class="section-label"><span class="section-num">[03]</span> ПЛИТКА</div>
+      <div class="section-label"><span class="section-num">[05]</span> ПЛИТКА</div>
       <div class="tone-toggle" id="tile-mode-toggle">
         <button class="tone-btn active" data-tile="hex" type="button">Гекс</button>
         <button class="tone-btn" data-tile="pixel" type="button">Пиксель</button>
       </div>
-      <p id="tile-mode-hint" style="font-size: 11px; color: var(--ink-60); line-height: 1.45; margin-top: 8px;">Гекс — скруглённый контур из SVG. Пиксель — квадратная сетка, без серых оттенков (только заливка или фон).</p>
     </section>
 
     <section class="control">
       <div class="control-header">
         <span class="control-label" id="grid-label">Размер гексагона</span>
-        <span class="control-value" id="grid-value">18 px</span>
+        <span class="control-value" id="grid-value">14 px</span>
       </div>
-      <input type="range" id="grid-size" min="4" max="42" step="1" value="18">
+      <input type="range" id="grid-size" min="4" max="42" step="1" value="14">
+    </section>
+
+    <section class="control" id="ctrl-fill">
+      <div class="control-header">
+        <span class="control-label" id="fill-label">Заполнение ячейки</span>
+        <span class="control-value" id="element-value">0.88×</span>
+      </div>
+      <input type="range" id="element-size" min="0.20" max="1" step="0.02" value="0.88">
     </section>
 
     <section class="control">
       <div class="control-header">
-        <span class="control-label">Заполнение ячейки</span>
-        <span class="control-value" id="element-value">0.92×</span>
+        <span class="control-label">Порог</span>
+        <span class="control-value" id="threshold-value">0.45</span>
       </div>
-      <input type="range" id="element-size" min="0.72" max="1" step="0.02" value="0.92">
+      <input type="range" id="threshold" min="0.10" max="0.85" step="0.01" value="0.45">
+    </section>
+
+    <section class="control" id="ctrl-softness">
+      <div class="control-header">
+        <span class="control-label">Мягкость края</span>
+        <span class="control-value" id="softness-value">0.12</span>
+      </div>
+      <input type="range" id="softness" min="0.00" max="0.30" step="0.01" value="0.12">
+    </section>
+
+    <section class="control">
+      <div class="control-header">
+        <span class="control-label">Сглаживание</span>
+        <span class="control-value" id="blur-value">1.0 px</span>
+      </div>
+      <input type="range" id="blur" min="0" max="4" step="0.2" value="1.0">
     </section>
 
     <section class="control">
       <div class="control-header">
         <span class="control-label">Контраст</span>
-        <span class="control-value" id="contrast-value">1.00</span>
+        <span class="control-value" id="contrast-value">1.40</span>
       </div>
-      <input type="range" id="contrast" min="0.5" max="2.5" step="0.05" value="1.0">
-    </section>
-
-    <section class="control">
-      <div class="control-header">
-        <span class="control-label">Плотность</span>
-        <span class="control-value" id="density-value">100%</span>
-      </div>
-      <input type="range" id="density" min="0.3" max="1.5" step="0.05" value="1.0">
+      <input type="range" id="contrast" min="0.5" max="3.0" step="0.05" value="1.4">
     </section>
 
     <section>
-      <div class="section-label"><span class="section-num">[04]</span> ИНВЕРСИЯ</div>
-      <div class="tone-toggle" id="invert-toggle">
+      <div class="section-label"><span class="section-num">[06]</span> ПОСТ-ОБРАБОТКА</div>
+      <div class="tone-toggle" id="autonorm-toggle">
+        <button class="tone-btn active" data-norm="1" type="button">Автоуровни</button>
+        <button class="tone-btn" data-norm="0" type="button">Выкл</button>
+      </div>
+      <div class="tone-toggle" id="autocrop-toggle" style="margin-top:6px">
+        <button class="tone-btn active" data-crop="1" type="button">Авто-кадр</button>
+        <button class="tone-btn" data-crop="0" type="button">Без рамки</button>
+      </div>
+      <div class="tone-toggle" id="invert-toggle" style="margin-top:6px">
         <button class="tone-btn active" data-invert="0" type="button">Оригинал</button>
         <button class="tone-btn" data-invert="1" type="button">Инверсия</button>
       </div>
+      <p class="hint">Автоуровни растягивают тёмный/светлый. Авто-кадр обрезает пустые поля.</p>
     </section>
 
     <section>
-      <div class="section-label"><span class="section-num">[05]</span> ЭКСПОРТ</div>
+      <div class="section-label"><span class="section-num">[07]</span> ЭКСПОРТ</div>
       <div class="btn-group">
         <button class="btn btn-secondary" id="btn-png" type="button" disabled>
           <span class="btn-icon">
@@ -543,10 +568,10 @@
         <span>Y: <span id="dim-y">—</span></span>
         <span>POINTS: <span id="point-count">—</span></span>
       </div>
-      <div><span id="output-label">OUTPUT / HEX.MONO</span></div>
+      <div><span id="output-label">OUTPUT / HEX.MONO / DARK</span></div>
     </div>
 
-    <div class="canvas-stage" id="stage">
+    <div class="canvas-stage bg-dark" id="stage">
       <div class="canvas-corner tl"></div>
       <div class="canvas-corner tr"></div>
       <div class="canvas-corner bl"></div>
@@ -554,14 +579,14 @@
 
       <div class="empty-state" id="empty-state">
         <svg class="empty-cube" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
-          <polygon points="28,4 50,16 50,40 28,52 6,40 6,16" fill="none" stroke="#1a1a1a" stroke-width="0.8"/>
-          <line x1="6" y1="16" x2="28" y2="28" stroke="#1a1a1a" stroke-width="0.8"/>
-          <line x1="50" y1="16" x2="28" y2="28" stroke="#1a1a1a" stroke-width="0.8"/>
-          <line x1="28" y1="28" x2="28" y2="52" stroke="#1a1a1a" stroke-width="0.8"/>
-          <circle cx="28" cy="28" r="2" fill="#1a1a1a"/>
+          <polygon points="28,4 50,16 50,40 28,52 6,40 6,16" fill="none" stroke="#888" stroke-width="0.8"/>
+          <line x1="6" y1="16" x2="28" y2="28" stroke="#888" stroke-width="0.8"/>
+          <line x1="50" y1="16" x2="28" y2="28" stroke="#888" stroke-width="0.8"/>
+          <line x1="28" y1="28" x2="28" y2="52" stroke="#888" stroke-width="0.8"/>
+          <circle cx="28" cy="28" r="2" fill="#888"/>
         </svg>
-        <h2>Перетащите изображение</h2>
-        <p>или нажмите кнопку, чтобы загрузить файл.<br>JPG, PNG, WEBP. Можно вставить из буфера (Ctrl+V).</p>
+        <h2 style="color:#ccc">Перетащите изображение</h2>
+        <p style="color:#888">или нажмите кнопку, чтобы загрузить файл.<br>JPG, PNG, WEBP. Можно вставить из буфера (Ctrl+V).</p>
         <button class="empty-cta" id="empty-load" type="button">
           <svg width="10" height="10" viewBox="0 0 10 10"><path d="M5 1v8M1 5h8" stroke="#fff" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg>
           Выбрать файл
@@ -591,7 +616,7 @@
   <div class="footer-meta">
     <span>HEX MOSAIC</span>
     <span>RENDER LOCAL</span>
-    <span>v.01</span>
+    <span>v.03</span>
   </div>
 </footer>
 
@@ -601,7 +626,7 @@
 
   var SQRT3 = Math.sqrt(3);
 
-  /** Точный path из Figma (viewBox 194×174) */
+  // Скруглённый гексагон (path из Figma)
   var HEX_PATH_D = 'M135.358 0C142.504 0 149.106 3.81198 152.679 10L191.132 76.6025C194.704 82.7906 194.704 90.4145 191.132 96.6025L152.679 163.205C149.106 169.393 142.504 173.205 135.358 173.205L58.4523 173.205C51.307 173.205 44.7044 169.393 41.1318 163.205L2.67878 96.6025C-.893878 90.4145 -.893878 82.7906 2.67878 76.6025L41.1318 10C44.7044 3.81198 51.307 0 58.4523 0L135.358 0Z';
   var HEX_PATH_CX = 96.9054;
   var HEX_PATH_CY = 86.6025;
@@ -610,12 +635,17 @@
 
   var state = {
     sourceImage: null,
+    background: 'dark',      // 'light' | 'dark'
     tone: 'mono',
     tileMode: 'hex',
-    gridSize: 18,
-    elementSize: 0.92,
-    contrast: 1.0,
-    density: 1.0,
+    gridSize: 14,
+    elementSize: 0.88,
+    threshold: 0.45,
+    softness: 0.12,
+    blur: 1.0,
+    contrast: 1.4,
+    autoNorm: true,
+    autoCrop: true,
     invert: false,
     lastRender: null
   };
@@ -628,10 +658,11 @@
   var loading = $('loading');
   var fileInput = $('file-input');
   if (!ctx) {
-    alert('Ваш браузер не поддерживает Canvas 2D. Обновите браузер или попробуйте другой.');
+    alert('Ваш браузер не поддерживает Canvas 2D.');
     return;
   }
 
+  // ============ ЗАГРУЗКА ============
   function showCanvas() {
     emptyState.style.display = 'none';
     canvas.style.display = 'block';
@@ -640,12 +671,8 @@
   }
 
   function loadImageFromFile(file) {
-    if (!file || !file.type || file.type.indexOf('image/') !== 0) {
-      console.warn('Not an image file');
-      return;
-    }
+    if (!file || !file.type || file.type.indexOf('image/') !== 0) return;
     $('source-name').textContent = file.name.toUpperCase().slice(0, 28);
-
     var reader = new FileReader();
     reader.onload = function(e) {
       var img = new Image();
@@ -653,9 +680,7 @@
         state.sourceImage = img;
         render();
       };
-      img.onerror = function() {
-        alert('Не удалось загрузить изображение');
-      };
+      img.onerror = function() { alert('Не удалось загрузить изображение'); };
       img.src = e.target.result;
     };
     reader.onerror = function() { alert('Ошибка чтения файла'); };
@@ -665,88 +690,81 @@
   fileInput.addEventListener('change', function(e) {
     if (e.target.files && e.target.files[0]) loadImageFromFile(e.target.files[0]);
   });
-
   $('btn-load').addEventListener('click', function() { fileInput.click(); });
   $('empty-load').addEventListener('click', function() { fileInput.click(); });
 
   $('btn-paste').addEventListener('click', function() {
     if (!navigator.clipboard || !navigator.clipboard.read) {
-      alert('Ваш браузер не поддерживает чтение буфера обмена. Используйте Ctrl+V или загрузку файла.');
+      alert('Браузер не поддерживает чтение буфера. Используйте Ctrl+V.');
       return;
     }
     navigator.clipboard.read().then(function(items) {
       for (var i = 0; i < items.length; i++) {
-        var item = items[i];
-        for (var j = 0; j < item.types.length; j++) {
-          var type = item.types[j];
+        for (var j = 0; j < items[i].types.length; j++) {
+          var type = items[i].types[j];
           if (type.indexOf('image/') === 0) {
-            return item.getType(type).then(function(blob) {
+            return items[i].getType(type).then(function(blob) {
               loadImageFromFile(new File([blob], 'clipboard.png', { type: type }));
             });
           }
         }
       }
-      alert('В буфере обмена нет изображения');
-    }).catch(function() {
-      alert('Не удалось прочитать буфер обмена. Используйте Ctrl+V или загрузку файла.');
-    });
+      alert('В буфере нет изображения');
+    }).catch(function() { alert('Не удалось прочитать буфер.'); });
   });
 
   ['dragover', 'dragenter'].forEach(function(ev) {
-    stage.addEventListener(ev, function(e) {
-      e.preventDefault();
-      stage.classList.add('drag-over');
-    });
+    stage.addEventListener(ev, function(e) { e.preventDefault(); stage.classList.add('drag-over'); });
   });
   ['dragleave', 'drop'].forEach(function(ev) {
-    stage.addEventListener(ev, function(e) {
-      e.preventDefault();
-      stage.classList.remove('drag-over');
-    });
+    stage.addEventListener(ev, function(e) { e.preventDefault(); stage.classList.remove('drag-over'); });
   });
   stage.addEventListener('drop', function(e) {
     e.preventDefault();
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      loadImageFromFile(e.dataTransfer.files[0]);
-    }
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) loadImageFromFile(e.dataTransfer.files[0]);
   });
-
   document.addEventListener('paste', function(e) {
     if (e.clipboardData && e.clipboardData.items) {
       for (var i = 0; i < e.clipboardData.items.length; i++) {
         var item = e.clipboardData.items[i];
         if (item.type.indexOf('image/') === 0) {
           var blob = item.getAsFile();
-          if (blob) {
-            loadImageFromFile(blob);
-            return;
-          }
+          if (blob) loadImageFromFile(blob);
+          return;
         }
       }
     }
   });
 
+  // ============ КОНТРОЛЫ ============
   $('grid-size').addEventListener('input', function(e) {
     state.gridSize = parseInt(e.target.value, 10);
     $('grid-value').textContent = state.gridSize + ' px';
     debouncedRender();
   });
-
   $('element-size').addEventListener('input', function(e) {
     state.elementSize = parseFloat(e.target.value);
     $('element-value').textContent = state.elementSize.toFixed(2) + '×';
     debouncedRender();
   });
-
+  $('threshold').addEventListener('input', function(e) {
+    state.threshold = parseFloat(e.target.value);
+    $('threshold-value').textContent = state.threshold.toFixed(2);
+    debouncedRender();
+  });
+  $('softness').addEventListener('input', function(e) {
+    state.softness = parseFloat(e.target.value);
+    $('softness-value').textContent = state.softness.toFixed(2);
+    debouncedRender();
+  });
+  $('blur').addEventListener('input', function(e) {
+    state.blur = parseFloat(e.target.value);
+    $('blur-value').textContent = state.blur.toFixed(1) + ' px';
+    debouncedRender();
+  });
   $('contrast').addEventListener('input', function(e) {
     state.contrast = parseFloat(e.target.value);
     $('contrast-value').textContent = state.contrast.toFixed(2);
-    debouncedRender();
-  });
-
-  $('density').addEventListener('input', function(e) {
-    state.density = parseFloat(e.target.value);
-    $('density-value').textContent = Math.round(state.density * 100) + '%';
     debouncedRender();
   });
 
@@ -767,40 +785,109 @@
   function updateTileUi() {
     var isPixel = state.tileMode === 'pixel';
     $('grid-label').textContent = isPixel ? 'Размер пикселя' : 'Размер гексагона';
-    $('grid-size').min = isPixel ? '4' : '8';
+    $('fill-label').textContent = isPixel ? 'Заполнение пикселя' : 'Заполнение ячейки';
+    $('grid-size').min = isPixel ? '4' : '6';
     if (state.gridSize < parseInt($('grid-size').min, 10)) {
       state.gridSize = parseInt($('grid-size').min, 10);
       $('grid-size').value = state.gridSize;
       $('grid-value').textContent = state.gridSize + ' px';
     }
-    $('element-size').disabled = isPixel;
-    if (isPixel) {
-      state.elementSize = 1;
-      $('element-value').textContent = '1.00×';
-    }
+    // Softness не нужен в пиксельном режиме (там жёсткий threshold).
+    // Заполнение ячейки видно всегда — и в hex, и в pixel (там это gap между пикселями).
+    $('ctrl-softness').style.display = isPixel ? 'none' : '';
   }
 
   function updateOutputLabel() {
     var mode = state.tileMode === 'pixel' ? 'PIXEL' : 'HEX';
-    $('output-label').textContent = 'OUTPUT / ' + mode + '.' + state.tone.toUpperCase() + (state.invert ? ' / INV' : '');
+    var bg = state.background === 'dark' ? 'DARK' : 'LIGHT';
+    $('output-label').textContent = 'OUTPUT / ' + mode + '.' + state.tone.toUpperCase() + ' / ' + bg + (state.invert ? ' / INV' : '');
   }
 
+  function updateStageBg() {
+    if (state.background === 'dark') stage.classList.add('bg-dark');
+    else stage.classList.remove('bg-dark');
+  }
+
+  bindToggle('.tone-btn[data-bg]', function(btn) {
+    state.background = btn.dataset.bg;
+    updateStageBg();
+    updateOutputLabel();
+  });
   bindToggle('.tone-btn[data-tone]', function(btn) {
     state.tone = btn.dataset.tone;
     updateOutputLabel();
   });
-
   bindToggle('.tone-btn[data-tile]', function(btn) {
     state.tileMode = btn.dataset.tile;
     updateTileUi();
     updateOutputLabel();
   });
-
   bindToggle('.tone-btn[data-invert]', function(btn) {
     state.invert = btn.dataset.invert === '1';
     updateOutputLabel();
   });
+  bindToggle('.tone-btn[data-norm]', function(btn) {
+    state.autoNorm = btn.dataset.norm === '1';
+  });
+  bindToggle('.tone-btn[data-crop]', function(btn) {
+    state.autoCrop = btn.dataset.crop === '1';
+  });
 
+  // ============ ПРЕСЕТЫ ============
+  var PRESETS = {
+    poster:   { tileMode: 'hex',   gridSize: 18, elementSize: 0.85, threshold: 0.40, softness: 0.10, blur: 1.4, contrast: 1.6,  background: 'dark',  autoNorm: true,  autoCrop: true  },
+    icon:     { tileMode: 'pixel', gridSize: 9,  elementSize: 0.72, threshold: 0.45, softness: 0.05, blur: 0.8, contrast: 1.5,  background: 'dark',  autoNorm: true,  autoCrop: true  },
+    portrait: { tileMode: 'hex',   gridSize: 10, elementSize: 0.90, threshold: 0.35, softness: 0.22, blur: 1.0, contrast: 1.20, background: 'dark',  autoNorm: true,  autoCrop: true  },
+    reset:    { tileMode: 'hex',   gridSize: 14, elementSize: 0.88, threshold: 0.45, softness: 0.12, blur: 1.0, contrast: 1.40, background: 'dark',  autoNorm: true,  autoCrop: true,  invert: false }
+  };
+
+  function applyPreset(name) {
+    var p = PRESETS[name];
+    if (!p) return;
+    Object.keys(p).forEach(function(k) { state[k] = p[k]; });
+    syncUiFromState();
+    render();
+  }
+
+  document.querySelectorAll('.preset-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { applyPreset(btn.dataset.preset); });
+  });
+
+  function syncUiFromState() {
+    $('grid-size').value = state.gridSize;
+    $('grid-value').textContent = state.gridSize + ' px';
+    $('element-size').value = state.elementSize;
+    $('element-value').textContent = state.elementSize.toFixed(2) + '×';
+    $('threshold').value = state.threshold;
+    $('threshold-value').textContent = state.threshold.toFixed(2);
+    $('softness').value = state.softness;
+    $('softness-value').textContent = state.softness.toFixed(2);
+    $('blur').value = state.blur;
+    $('blur-value').textContent = state.blur.toFixed(1) + ' px';
+    $('contrast').value = state.contrast;
+    $('contrast-value').textContent = state.contrast.toFixed(2);
+
+    // toggles
+    setToggleActive('.tone-btn[data-bg]', 'bg', state.background);
+    setToggleActive('.tone-btn[data-tile]', 'tile', state.tileMode);
+    setToggleActive('.tone-btn[data-norm]', 'norm', state.autoNorm ? '1' : '0');
+    setToggleActive('.tone-btn[data-crop]', 'crop', state.autoCrop ? '1' : '0');
+    setToggleActive('.tone-btn[data-invert]', 'invert', state.invert ? '1' : '0');
+
+    updateTileUi();
+    updateOutputLabel();
+    updateStageBg();
+  }
+
+  function setToggleActive(selector, dataKey, value) {
+    var nodes = document.querySelectorAll(selector);
+    for (var i = 0; i < nodes.length; i++) {
+      if (nodes[i].dataset[dataKey] === value) nodes[i].classList.add('active');
+      else nodes[i].classList.remove('active');
+    }
+  }
+
+  // ============ РЕНДЕР ============
   var renderTimer = null;
   function debouncedRender() {
     if (renderTimer) clearTimeout(renderTimer);
@@ -811,98 +898,98 @@
     if (!state.sourceImage) return;
     showCanvas();
     loading.classList.add('active');
-
     (window.requestAnimationFrame || window.setTimeout)(function() {
-      try {
-        doRender();
-      } catch (err) {
-        console.error('Render error:', err);
-        alert('Ошибка рендеринга: ' + err.message);
-      }
+      try { doRender(); }
+      catch (err) { console.error('Render error:', err); alert('Ошибка рендера: ' + err.message); }
       loading.classList.remove('active');
     }, 20);
   }
 
-  function fmt(n) {
-    return (Math.round(n * 1000) / 1000).toString();
+  function fmt(n) { return (Math.round(n * 1000) / 1000).toString(); }
+
+  // ---- БОКС-ФИЛЬТР: средняя «тёмность» по всей площади ячейки ----
+  // dark = (1 - luma) * alpha — корректно учитывает PNG с прозрачным фоном
+  function sampleCellDark(data, w, h, cx, cy, halfW, halfH) {
+    var x0 = Math.max(0, Math.floor(cx - halfW));
+    var y0 = Math.max(0, Math.floor(cy - halfH));
+    var x1 = Math.min(w - 1, Math.ceil(cx + halfW));
+    var y1 = Math.min(h - 1, Math.ceil(cy + halfH));
+    if (x1 < x0 || y1 < y0) return 0;
+    // адаптивный шаг — производительность для больших ячеек
+    var area = (x1 - x0 + 1) * (y1 - y0 + 1);
+    var step = area > 900 ? 2 : 1;
+    var sum = 0, cnt = 0;
+    for (var y = y0; y <= y1; y += step) {
+      for (var x = x0; x <= x1; x += step) {
+        var ix = (y * w + x) * 4;
+        var a = data[ix + 3] / 255;
+        var luma = (0.299 * data[ix] + 0.587 * data[ix + 1] + 0.114 * data[ix + 2]) / 255;
+        sum += (1 - luma) * a;
+        cnt++;
+      }
+    }
+    return cnt > 0 ? sum / cnt : 0;
   }
 
-  function fillHexCell(context, cx, cy, scale, color) {
+  // ---- Авто-нормализация по перцентилям 2/98 ----
+  function computeNormalization(data, w, h) {
+    var step = Math.max(2, Math.floor(Math.sqrt(w * h) / 180));
+    var arr = [];
+    for (var y = 0; y < h; y += step) {
+      for (var x = 0; x < w; x += step) {
+        var ix = (y * w + x) * 4;
+        var a = data[ix + 3] / 255;
+        if (a < 0.05) continue;
+        var luma = (0.299 * data[ix] + 0.587 * data[ix + 1] + 0.114 * data[ix + 2]) / 255;
+        arr.push((1 - luma) * a);
+      }
+    }
+    if (arr.length === 0) return { lo: 0, hi: 1 };
+    arr.sort(function(a, b) { return a - b; });
+    var lo = arr[Math.floor(arr.length * 0.02)] || 0;
+    var hi = arr[Math.floor(arr.length * 0.98)] || 1;
+    if (hi - lo < 0.05) { lo = 0; hi = 1; } // подстраховка для совсем плоских картинок
+    return { lo: lo, hi: hi };
+  }
+
+  // smoothstep для мягкого края
+  function smoothstep(edge0, edge1, x) {
+    if (edge1 <= edge0) return x >= edge0 ? 1 : 0;
+    var t = (x - edge0) / (edge1 - edge0);
+    if (t < 0) t = 0; else if (t > 1) t = 1;
+    return t * t * (3 - 2 * t);
+  }
+
+  function fillHexCell(context, cx, cy, scale, fill) {
     context.save();
     context.translate(cx, cy);
     context.scale(scale, scale);
     context.translate(-HEX_PATH_CX, -HEX_PATH_CY);
-    context.fillStyle = color;
+    context.fillStyle = fill;
     context.fill(hexPath2D);
     context.restore();
   }
 
-  function sampleLum(data, w, h, cx, cy, radius) {
-    var r = Math.max(2, Math.floor(radius * 0.35));
-    var x0 = Math.max(0, Math.floor(cx - r));
-    var y0 = Math.max(0, Math.floor(cy - r));
-    var x1 = Math.min(w - 1, Math.ceil(cx + r));
-    var y1 = Math.min(h - 1, Math.ceil(cy + r));
-    var lumSum = 0;
-    var cnt = 0;
-    var step = Math.max(1, Math.floor(r / 2));
-    for (var y = y0; y <= y1; y += step) {
-      for (var x = x0; x <= x1; x += step) {
-        var ix = (y * w + x) * 4;
-        lumSum += (0.299 * data[ix] + 0.587 * data[ix + 1] + 0.114 * data[ix + 2]) / 255;
-        cnt++;
-      }
+  // Палитра ячейки с учётом фона
+  function pickInkColor(coverage, tone, bg) {
+    // coverage — насколько ячейка «заполнена» (0..1)
+    if (bg === 'dark') {
+      // на тёмном фоне ячейки светлые
+      if (tone === 'mono') return '#ececec';
+      // signal на тёмном — более яркий фиолет
+      return coverage > 0.7 ? '#9D7FFF' : '#7B5CD9';
+    } else {
+      if (tone === 'mono') return '#101412';
+      return coverage > 0.7 ? '#5E3FBF' : '#7B5CD9';
     }
-    return cnt > 0 ? lumSum / cnt : 1;
   }
 
-  function mixColorRgb(hex, amt) {
-    if (amt <= 0) return { r: 255, g: 255, b: 255 };
-    var n = hex.replace('#', '');
-    var r = parseInt(n.slice(0, 2), 16);
-    var g = parseInt(n.slice(2, 4), 16);
-    var b = parseInt(n.slice(4, 6), 16);
-    return {
-      r: Math.round(255 + (r - 255) * amt),
-      g: Math.round(255 + (g - 255) * amt),
-      b: Math.round(255 + (b - 255) * amt)
-    };
-  }
-
-  function rgbToHex(rgb) {
-    function h(x) {
-      var s = Math.max(0, Math.min(255, x)).toString(16);
-      return s.length === 1 ? '0' + s : s;
-    }
-    return '#' + h(rgb.r) + h(rgb.g) + h(rgb.b);
-  }
-
-  function cellInkAndColor(avg, contrast, density, tone, binary) {
-    var v = (avg - 0.5) * contrast + 0.5;
-    if (v < 0) v = 0;
-    if (v > 1) v = 1;
-
-    var ink = (1 - v) * density;
-    if (ink < 0) ink = 0;
-    if (ink > 1) ink = 1;
-
-    if (binary && ink < 0.5) {
-      return null;
-    }
-
-    var baseHex = tone === 'mono' ? '#101412' : (avg < 0.4 ? '#5E3FBF' : '#7B5CD9');
-    if (binary) {
-      return baseHex;
-    }
-
-    return rgbToHex(mixColorRgb(baseHex, ink));
-  }
+  function bgColor() { return state.background === 'dark' ? '#0a0a0a' : '#ffffff'; }
 
   function doRender() {
     var img = state.sourceImage;
 
-    var MAX_W = 1000;
-    var MAX_H = 800;
+    var MAX_W = 1000, MAX_H = 800;
     var aspect = img.width / img.height;
     var outW, outH;
     if (aspect >= MAX_W / MAX_H) {
@@ -914,125 +1001,185 @@
     }
     outW = Math.round(outW);
     outH = Math.round(outH);
-    if (!outW || !outH) throw new Error('Некорректные размеры изображения');
+    if (!outW || !outH) throw new Error('Некорректные размеры');
 
-    canvas.width = outW;
-    canvas.height = outH;
-    canvas.style.width = 'min(100%, ' + outW + 'px)';
-    canvas.style.height = 'auto';
-
+    // Sample-канвас с pre-blur
     var sample = document.createElement('canvas');
     sample.width = outW;
     sample.height = outH;
     var sctx = sample.getContext('2d');
+    sctx.clearRect(0, 0, outW, outH); // прозрачный фон — сохраняем alpha PNG
+    if (state.blur > 0.01) sctx.filter = 'blur(' + state.blur + 'px)';
     sctx.drawImage(img, 0, 0, outW, outH);
-    var data;
-    try {
-      data = sctx.getImageData(0, 0, outW, outH).data;
-    } catch (err) {
-      throw new Error('Не удалось прочитать пиксели изображения');
-    }
+    sctx.filter = 'none';
 
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, outW, outH);
+    var data;
+    try { data = sctx.getImageData(0, 0, outW, outH).data; }
+    catch (err) { throw new Error('Не удалось прочитать пиксели'); }
+
+    // Авто-нормализация
+    var norm = state.autoNorm ? computeNormalization(data, outW, outH) : { lo: 0, hi: 1 };
 
     var size = state.gridSize;
     var fillScale = state.elementSize;
     var contrast = state.contrast;
-    var density = state.density;
-    var binary = state.tileMode === 'pixel';
+    var threshold = state.threshold;
+    var softness = state.softness;
+    var isPixel = state.tileMode === 'pixel';
     var cells = [];
-    var cellCount = 0;
 
-    if (state.tileMode === 'pixel') {
+    // helpers для bbox
+    var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    function expandBbox(x, y, w, h) {
+      if (x < minX) minX = x;
+      if (y < minY) minY = y;
+      if (x + w > maxX) maxX = x + w;
+      if (y + h > maxY) maxY = y + h;
+    }
+
+    if (isPixel) {
       var cell = size;
-
       for (var py = 0; py < outH; py += cell) {
         for (var px = 0; px < outW; px += cell) {
-          var cx = px + cell / 2;
-          var cy = py + cell / 2;
-          var avg = sampleLum(data, outW, outH, cx, cy, cell / 2);
-          if (state.invert) avg = 1 - avg;
-
-          var color = cellInkAndColor(avg, contrast, density, state.tone, true);
-          if (!color) continue;
-
-          ctx.fillStyle = color;
-          ctx.fillRect(px, py, cell, cell);
-
-          cellCount++;
-          cells.push({ type: 'rect', x: px, y: py, w: cell, h: cell, color: color });
+          var cx = px + cell / 2, cy = py + cell / 2;
+          var dark = sampleCellDark(data, outW, outH, cx, cy, cell / 2, cell / 2);
+          // нормализация
+          if (norm.hi > norm.lo) dark = (dark - norm.lo) / (norm.hi - norm.lo);
+          if (dark < 0) dark = 0; if (dark > 1) dark = 1;
+          // контраст вокруг 0.5
+          dark = (dark - 0.5) * contrast + 0.5;
+          if (dark < 0) dark = 0; if (dark > 1) dark = 1;
+          if (state.invert) dark = 1 - dark;
+          // жёсткий threshold
+          if (dark < threshold) continue;
+          var color = pickInkColor(dark, state.tone, state.background);
+          // квадрат меньше клетки → видимые промежутки между пикселями
+          var inner = cell * fillScale;
+          var off = (cell - inner) / 2;
+          cells.push({ type: 'rect', x: px + off, y: py + off, w: inner, h: inner, color: color });
+          expandBbox(px + off, py + off, inner, inner);
         }
       }
-
-      state.lastRender = {
-        width: outW,
-        height: outH,
-        tileMode: 'pixel',
-        cells: cells
-      };
     } else {
       var hexScale = (size * fillScale) / HEX_PATH_HALF_H;
-      var hexExtent = HEX_PATH_HALF_H * hexScale;
       var horiz = SQRT3 * size;
       var vert = 1.5 * size;
       var qMin = Math.floor(-2 - outW / horiz);
       var qMax = Math.ceil(outW / horiz + 2);
       var rMin = Math.floor(-2 - outH / vert);
       var rMax = Math.ceil(outH / vert + 3);
+      // box-filter по полному гекс-радиусу (а не маленькому ядру)
+      var sampleHalfH = size;          // вертикальный полу-размер
+      var sampleHalfW = size * SQRT3 / 2; // горизонтальный полу-размер
 
       for (var q = qMin; q <= qMax; q++) {
         for (var r = rMin; r <= rMax; r++) {
           var hx = size * SQRT3 * (q + r / 2);
           var hy = size * 1.5 * r;
+          if (hx + sampleHalfW < 0 || hy + sampleHalfH < 0 || hx - sampleHalfW > outW || hy - sampleHalfH > outH) continue;
 
-          if (hx < -hexExtent || hy < -hexExtent || hx > outW + hexExtent || hy > outH + hexExtent) {
-            continue;
-          }
+          var dark2 = sampleCellDark(data, outW, outH, hx, hy, sampleHalfW, sampleHalfH);
+          if (norm.hi > norm.lo) dark2 = (dark2 - norm.lo) / (norm.hi - norm.lo);
+          if (dark2 < 0) dark2 = 0; if (dark2 > 1) dark2 = 1;
+          dark2 = (dark2 - 0.5) * contrast + 0.5;
+          if (dark2 < 0) dark2 = 0; if (dark2 > 1) dark2 = 1;
+          if (state.invert) dark2 = 1 - dark2;
 
-          var avg = sampleLum(data, outW, outH, hx, hy, hexExtent);
-          if (state.invert) avg = 1 - avg;
+          // мягкий край через smoothstep
+          var coverage = softness > 0.001
+            ? smoothstep(threshold - softness, threshold + softness, dark2)
+            : (dark2 >= threshold ? 1 : 0);
 
-          var color = cellInkAndColor(avg, contrast, density, state.tone, false);
-          if (!color) continue;
+          if (coverage < 0.04) continue;
 
-          fillHexCell(ctx, hx, hy, hexScale, color);
+          var inkColor = pickInkColor(dark2, state.tone, state.background);
+          cells.push({ type: 'hex', cx: hx, cy: hy, color: inkColor, alpha: coverage });
 
-          cellCount++;
-          cells.push({ type: 'hex', cx: hx, cy: hy, color: color });
+          // bbox по описанному прямоугольнику ячейки
+          var hexExtent = HEX_PATH_HALF_H * hexScale;
+          expandBbox(hx - hexExtent, hy - hexExtent, hexExtent * 2, hexExtent * 2);
         }
       }
-
-      state.lastRender = {
-        width: outW,
-        height: outH,
-        tileMode: 'hex',
-        hexScale: hexScale,
-        cells: cells
-      };
     }
 
-    $('dim-x').textContent = outW;
-    $('dim-y').textContent = outH;
-    $('point-count').textContent = cellCount.toLocaleString('ru-RU');
+    // ---- АВТО-КАДР ----
+    var pad = isPixel ? Math.round(size * 1.5) : Math.round(size * 2);
+    var canvasW, canvasH, offsetX = 0, offsetY = 0;
+    if (state.autoCrop && isFinite(minX) && cells.length > 0) {
+      minX = Math.max(0, Math.floor(minX) - pad);
+      minY = Math.max(0, Math.floor(minY) - pad);
+      maxX = Math.min(outW, Math.ceil(maxX) + pad);
+      maxY = Math.min(outH, Math.ceil(maxY) + pad);
+      canvasW = Math.max(1, maxX - minX);
+      canvasH = Math.max(1, maxY - minY);
+      offsetX = -minX;
+      offsetY = -minY;
+    } else {
+      canvasW = outW;
+      canvasH = outH;
+    }
+
+    // Применяем смещение к ячейкам (один раз) — упрощает SVG-экспорт
+    if (offsetX !== 0 || offsetY !== 0) {
+      for (var i = 0; i < cells.length; i++) {
+        var c = cells[i];
+        if (c.type === 'rect') { c.x += offsetX; c.y += offsetY; }
+        else { c.cx += offsetX; c.cy += offsetY; }
+      }
+    }
+
+    canvas.width = canvasW;
+    canvas.height = canvasH;
+    canvas.style.width = 'min(100%, ' + canvasW + 'px)';
+    canvas.style.height = 'auto';
+
+    // ---- Заливка фона ----
+    ctx.fillStyle = bgColor();
+    ctx.fillRect(0, 0, canvasW, canvasH);
+
+    // ---- Отрисовка ячеек ----
+    var hexScale2 = (size * fillScale) / HEX_PATH_HALF_H;
+    for (var k = 0; k < cells.length; k++) {
+      var cc = cells[k];
+      if (cc.type === 'rect') {
+        ctx.fillStyle = cc.color;
+        ctx.fillRect(cc.x, cc.y, cc.w, cc.h);
+      } else {
+        ctx.globalAlpha = cc.alpha;
+        fillHexCell(ctx, cc.cx, cc.cy, hexScale2, cc.color);
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    state.lastRender = {
+      width: canvasW,
+      height: canvasH,
+      tileMode: isPixel ? 'pixel' : 'hex',
+      hexScale: hexScale2,
+      bg: bgColor(),
+      cells: cells
+    };
+
+    $('dim-x').textContent = canvasW;
+    $('dim-y').textContent = canvasH;
+    $('point-count').textContent = cells.length.toLocaleString('ru-RU');
   }
 
+  // ============ ЭКСПОРТ ============
   $('btn-png').addEventListener('click', function() {
     if (!state.sourceImage) return;
     canvas.toBlob(function(blob) {
       try {
-        if (!blob) throw new Error('Не удалось сформировать PNG');
+        if (!blob) throw new Error('PNG не сформирован');
         var url = URL.createObjectURL(blob);
         var link = document.createElement('a');
-        link.download = 'mws-ai-hexrender-' + state.tone + '-' + Date.now() + '.png';
+        link.download = 'mws-hex-' + state.tileMode + '-' + state.background + '-' + Date.now() + '.png';
         link.href = url;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
-      } catch (err) {
-        alert('Ошибка экспорта PNG: ' + err.message);
-      }
+      } catch (err) { alert('Ошибка PNG: ' + err.message); }
     }, 'image/png');
   });
 
@@ -1042,9 +1189,8 @@
       var lr = state.lastRender;
       var parts = [
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + lr.width + ' ' + lr.height + '" width="' + lr.width + '" height="' + lr.height + '">',
-        '<rect width="100%" height="100%" fill="#ffffff"/>'
+        '<rect width="100%" height="100%" fill="' + lr.bg + '"/>'
       ];
-
       if (lr.tileMode === 'pixel') {
         for (var i = 0; i < lr.cells.length; i++) {
           var c = lr.cells[i];
@@ -1054,34 +1200,26 @@
         parts.push('<defs><path id="hex-unit" d="' + HEX_PATH_D + '" transform="translate(' + fmt(-HEX_PATH_CX) + ',' + fmt(-HEX_PATH_CY) + ')"/></defs>');
         for (var j = 0; j < lr.cells.length; j++) {
           var h = lr.cells[j];
-          parts.push('<use href="#hex-unit" transform="translate(' + fmt(h.cx) + ',' + fmt(h.cy) + ') scale(' + fmt(lr.hexScale) + ')" fill="' + h.color + '"/>');
+          var op = h.alpha < 0.999 ? (' opacity="' + fmt(h.alpha) + '"') : '';
+          parts.push('<use href="#hex-unit" transform="translate(' + fmt(h.cx) + ',' + fmt(h.cy) + ') scale(' + fmt(lr.hexScale) + ')" fill="' + h.color + '"' + op + '/>');
         }
       }
       parts.push('</svg>');
-
-      var svgString = parts.join('');
-      var blob = new Blob([svgString], { type: 'image/svg+xml' });
+      var blob = new Blob([parts.join('')], { type: 'image/svg+xml' });
       var url = URL.createObjectURL(blob);
       var link = document.createElement('a');
-      link.download = 'mws-ai-hexrender-' + state.tone + '-' + Date.now() + '.svg';
+      link.download = 'mws-hex-' + state.tileMode + '-' + state.background + '-' + Date.now() + '.svg';
       link.href = url;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
-    } catch (err) {
-      alert('Ошибка экспорта SVG: ' + err.message);
-    }
+    } catch (err) { alert('Ошибка SVG: ' + err.message); }
   });
 
-  state.gridSize = parseInt($('grid-size').value, 10);
-  state.elementSize = parseFloat($('element-size').value);
-  $('grid-value').textContent = state.gridSize + ' px';
-  $('element-value').textContent = state.elementSize.toFixed(2) + '×';
-
-  updateTileUi();
-  updateOutputLabel();
-  console.log('MWS AI Hex Render — initialized');
+  // ============ ИНИТ ============
+  syncUiFromState();
+  console.log('MWS AI Hex Render v.03 — initialized');
 })();
 </script>
 </body>
