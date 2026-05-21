@@ -8,9 +8,12 @@
 
 ## Vercel
 
-- **Framework Preset:** Other (без сборки)
-- **Root Directory:** оставьте пустым (корень репозитория) — `vercel.json` перенаправляет `/` на `hex-render/index.html`
-- Либо укажите **Root Directory:** `hex-render` и удалите `vercel.json`
+- **Framework Preset:** Other
+- **Root Directory:** пусто (корень репозитория)
+- **Build Command:** пусто
+- **Output Directory:** пусто (или `.`)
+- **Install Command:** можно отключить / оставить пустым
+- В корне должны быть `index.html` и `hex.svg` (не в подпапке)
 
 ## Файлы
 
