@@ -1,0 +1,8 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/", "destination": "/hex-render/index.html" },
+    { "source": "/index.html", "destination": "/hex-render/index.html" },
+    { "source": "/hex.svg", "destination": "/hex-render/hex.svg" }
+  ]
+}
