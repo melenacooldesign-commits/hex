@@ -469,15 +469,19 @@
 
     <section>
       <div class="section-label"><span class="section-num">[03]</span> ПЛИТКА</div>
-      <p style="font-size: 11px; color: var(--ink-60); line-height: 1.45; margin-top: -4px;">Сетка из одного SVG-контура (pointy-top, скругления из path). Меняется только тон заливки — геометрия ячеек одинакова.</p>
+      <div class="tone-toggle" id="tile-mode-toggle">
+        <button class="tone-btn active" data-tile="hex" type="button">Гекс</button>
+        <button class="tone-btn" data-tile="pixel" type="button">Пиксель</button>
+      </div>
+      <p id="tile-mode-hint" style="font-size: 11px; color: var(--ink-60); line-height: 1.45; margin-top: 8px;">Гекс — скруглённый контур из SVG. Пиксель — квадратная сетка, без серых оттенков (только заливка или фон).</p>
     </section>
 
     <section class="control">
       <div class="control-header">
-        <span class="control-label">Размер гексагона</span>
+        <span class="control-label" id="grid-label">Размер гексагона</span>
         <span class="control-value" id="grid-value">18 px</span>
       </div>
-      <input type="range" id="grid-size" min="8" max="42" step="1" value="18">
+      <input type="range" id="grid-size" min="4" max="42" step="1" value="18">
     </section>
 
     <section class="control">
@@ -607,6 +611,7 @@
   var state = {
     sourceImage: null,
     tone: 'mono',
+    tileMode: 'hex',
     gridSize: 18,
     elementSize: 0.92,
     contrast: 1.0,
@@ -759,12 +764,35 @@
     }
   }
 
+  function updateTileUi() {
+    var isPixel = state.tileMode === 'pixel';
+    $('grid-label').textContent = isPixel ? 'Размер пикселя' : 'Размер гексагона';
+    $('grid-size').min = isPixel ? '4' : '8';
+    if (state.gridSize < parseInt($('grid-size').min, 10)) {
+      state.gridSize = parseInt($('grid-size').min, 10);
+      $('grid-size').value = state.gridSize;
+      $('grid-value').textContent = state.gridSize + ' px';
+    }
+    $('element-size').disabled = isPixel;
+    if (isPixel) {
+      state.elementSize = 1;
+      $('element-value').textContent = '1.00×';
+    }
+  }
+
   function updateOutputLabel() {
-    $('output-label').textContent = 'OUTPUT / HEX.' + state.tone.toUpperCase() + (state.invert ? ' / INV' : '');
+    var mode = state.tileMode === 'pixel' ? 'PIXEL' : 'HEX';
+    $('output-label').textContent = 'OUTPUT / ' + mode + '.' + state.tone.toUpperCase() + (state.invert ? ' / INV' : '');
   }
 
   bindToggle('.tone-btn[data-tone]', function(btn) {
     state.tone = btn.dataset.tone;
+    updateOutputLabel();
+  });
+
+  bindToggle('.tone-btn[data-tile]', function(btn) {
+    state.tileMode = btn.dataset.tile;
+    updateTileUi();
     updateOutputLabel();
   });
 
@@ -849,6 +877,27 @@
     return '#' + h(rgb.r) + h(rgb.g) + h(rgb.b);
   }
 
+  function cellInkAndColor(avg, contrast, density, tone, binary) {
+    var v = (avg - 0.5) * contrast + 0.5;
+    if (v < 0) v = 0;
+    if (v > 1) v = 1;
+
+    var ink = (1 - v) * density;
+    if (ink < 0) ink = 0;
+    if (ink > 1) ink = 1;
+
+    if (binary && ink < 0.5) {
+      return null;
+    }
+
+    var baseHex = tone === 'mono' ? '#101412' : (avg < 0.4 ? '#5E3FBF' : '#7B5CD9');
+    if (binary) {
+      return baseHex;
+    }
+
+    return rgbToHex(mixColorRgb(baseHex, ink));
+  }
+
   function doRender() {
     var img = state.sourceImage;
 
@@ -891,58 +940,77 @@
     var fillScale = state.elementSize;
     var contrast = state.contrast;
     var density = state.density;
-
-    var hexScale = (size * fillScale) / HEX_PATH_HALF_H;
-    var hexExtent = HEX_PATH_HALF_H * hexScale;
-
-    var horiz = SQRT3 * size;
-    var vert = 1.5 * size;
-
-    var qMin = Math.floor(-2 - outW / horiz);
-    var qMax = Math.ceil(outW / horiz + 2);
-    var rMin = Math.floor(-2 - outH / vert);
-    var rMax = Math.ceil(outH / vert + 3);
-
+    var binary = state.tileMode === 'pixel';
     var cells = [];
     var cellCount = 0;
 
-    for (var q = qMin; q <= qMax; q++) {
-      for (var r = rMin; r <= rMax; r++) {
-        var hx = size * SQRT3 * (q + r / 2);
-        var hy = size * 1.5 * r;
+    if (state.tileMode === 'pixel') {
+      var cell = size;
 
-        if (hx < -hexExtent || hy < -hexExtent || hx > outW + hexExtent || hy > outH + hexExtent) {
-          continue;
+      for (var py = 0; py < outH; py += cell) {
+        for (var px = 0; px < outW; px += cell) {
+          var cx = px + cell / 2;
+          var cy = py + cell / 2;
+          var avg = sampleLum(data, outW, outH, cx, cy, cell / 2);
+          if (state.invert) avg = 1 - avg;
+
+          var color = cellInkAndColor(avg, contrast, density, state.tone, true);
+          if (!color) continue;
+
+          ctx.fillStyle = color;
+          ctx.fillRect(px, py, cell, cell);
+
+          cellCount++;
+          cells.push({ type: 'rect', x: px, y: py, w: cell, h: cell, color: color });
         }
-
-        var avg = sampleLum(data, outW, outH, hx, hy, hexExtent);
-        if (state.invert) avg = 1 - avg;
-
-        var v = (avg - 0.5) * contrast + 0.5;
-        if (v < 0) v = 0;
-        if (v > 1) v = 1;
-
-        var ink = (1 - v) * density;
-        if (ink < 0) ink = 0;
-        if (ink > 1) ink = 1;
-
-        var baseHex = state.tone === 'mono' ? '#101412' : (avg < 0.4 ? '#5E3FBF' : '#7B5CD9');
-        var rgb = mixColorRgb(baseHex, ink);
-        var color = rgbToHex(rgb);
-
-        fillHexCell(ctx, hx, hy, hexScale, color);
-
-        cellCount++;
-        cells.push({ cx: hx, cy: hy, color: color });
       }
-    }
 
-    state.lastRender = {
-      width: outW,
-      height: outH,
-      hexScale: hexScale,
-      cells: cells
-    };
+      state.lastRender = {
+        width: outW,
+        height: outH,
+        tileMode: 'pixel',
+        cells: cells
+      };
+    } else {
+      var hexScale = (size * fillScale) / HEX_PATH_HALF_H;
+      var hexExtent = HEX_PATH_HALF_H * hexScale;
+      var horiz = SQRT3 * size;
+      var vert = 1.5 * size;
+      var qMin = Math.floor(-2 - outW / horiz);
+      var qMax = Math.ceil(outW / horiz + 2);
+      var rMin = Math.floor(-2 - outH / vert);
+      var rMax = Math.ceil(outH / vert + 3);
+
+      for (var q = qMin; q <= qMax; q++) {
+        for (var r = rMin; r <= rMax; r++) {
+          var hx = size * SQRT3 * (q + r / 2);
+          var hy = size * 1.5 * r;
+
+          if (hx < -hexExtent || hy < -hexExtent || hx > outW + hexExtent || hy > outH + hexExtent) {
+            continue;
+          }
+
+          var avg = sampleLum(data, outW, outH, hx, hy, hexExtent);
+          if (state.invert) avg = 1 - avg;
+
+          var color = cellInkAndColor(avg, contrast, density, state.tone, false);
+          if (!color) continue;
+
+          fillHexCell(ctx, hx, hy, hexScale, color);
+
+          cellCount++;
+          cells.push({ type: 'hex', cx: hx, cy: hy, color: color });
+        }
+      }
+
+      state.lastRender = {
+        width: outW,
+        height: outH,
+        tileMode: 'hex',
+        hexScale: hexScale,
+        cells: cells
+      };
+    }
 
     $('dim-x').textContent = outW;
     $('dim-y').textContent = outH;
@@ -972,16 +1040,22 @@
     if (!state.lastRender) return;
     try {
       var lr = state.lastRender;
-      var defs = '<defs><path id="hex-unit" d="' + HEX_PATH_D + '" transform="translate(' + fmt(-HEX_PATH_CX) + ',' + fmt(-HEX_PATH_CY) + ')"/></defs>';
       var parts = [
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + lr.width + ' ' + lr.height + '" width="' + lr.width + '" height="' + lr.height + '">',
-        '<rect width="100%" height="100%" fill="#ffffff"/>',
-        defs
+        '<rect width="100%" height="100%" fill="#ffffff"/>'
       ];
 
-      for (var i = 0; i < lr.cells.length; i++) {
-        var c = lr.cells[i];
-        parts.push('<use href="#hex-unit" transform="translate(' + fmt(c.cx) + ',' + fmt(c.cy) + ') scale(' + fmt(lr.hexScale) + ')" fill="' + c.color + '"/>');
+      if (lr.tileMode === 'pixel') {
+        for (var i = 0; i < lr.cells.length; i++) {
+          var c = lr.cells[i];
+          parts.push('<rect x="' + fmt(c.x) + '" y="' + fmt(c.y) + '" width="' + fmt(c.w) + '" height="' + fmt(c.h) + '" fill="' + c.color + '"/>');
+        }
+      } else {
+        parts.push('<defs><path id="hex-unit" d="' + HEX_PATH_D + '" transform="translate(' + fmt(-HEX_PATH_CX) + ',' + fmt(-HEX_PATH_CY) + ')"/></defs>');
+        for (var j = 0; j < lr.cells.length; j++) {
+          var h = lr.cells[j];
+          parts.push('<use href="#hex-unit" transform="translate(' + fmt(h.cx) + ',' + fmt(h.cy) + ') scale(' + fmt(lr.hexScale) + ')" fill="' + h.color + '"/>');
+        }
       }
       parts.push('</svg>');
 
@@ -1005,6 +1079,7 @@
   $('grid-value').textContent = state.gridSize + ' px';
   $('element-value').textContent = state.elementSize.toFixed(2) + '×';
 
+  updateTileUi();
   updateOutputLabel();
   console.log('MWS AI Hex Render — initialized');
 })();
