@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MWS AI · Hex Render</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #ececec;
+    --surface: #ffffff;
+    --ink: #1a1a1a;
+    --ink-60: rgba(26,26,26,0.6);
+    --ink-40: rgba(26,26,26,0.4);
+    --ink-20: rgba(26,26,26,0.2);
+    --signal: #7B5CD9;
+    --sans: 'Inter', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--paper);
+    font-family: var(--sans);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 0.5px solid var(--ink-20);
+    background: var(--paper);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-cube { width: 18px; height: 18px; flex-shrink: 0; }
+  .brand-name { font-weight: 500; font-size: 13px; letter-spacing: -0.2px; }
+  .brand-divider { width: 1px; height: 14px; background: var(--ink-20); }
+
+  .tool-name {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--ink-60);
+  }
+
+  .topbar-meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--ink-60);
+  }
+
+  .status-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--signal);
+    margin-right: 6px;
+    animation: breathe 2.4s ease-in-out infinite;
+  }
+
+  @keyframes breathe {
+    0%, 100% { opacity: 0.4; transform: scale(0.85); }
+    50% { opacity: 1; transform: scale(1); }
+  }
+
+  .main {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+  }
+
+  .sidebar {
+    background: var(--paper);
+    border-right: 0.5px solid var(--ink-20);
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--ink-60);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .section-label::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    background: var(--ink);
+    display: inline-block;
+  }
+
+  .section-num { color: var(--ink-40); margin-right: 4px; }
+
+  .btn-group { display: flex; flex-direction: column; gap: 6px; }
+
+  .btn {
+    appearance: none;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    padding: 10px 16px;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: opacity 0.15s ease;
+    text-align: left;
+    width: 100%;
+  }
+
+  .btn:hover { opacity: 0.85; }
+  .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .btn-icon {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink);
+    border: 0.5px solid var(--ink);
+  }
+
+  .btn-secondary:hover { background: var(--ink); color: #fff; }
+  .btn-secondary .btn-icon { background: var(--ink); }
+
+  .control { display: flex; flex-direction: column; gap: 8px; }
+
+  .control-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .control-label { font-size: 12px; }
+
+  .control-value {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-60);
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 2px;
+    background: var(--ink-20);
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--ink);
+    cursor: pointer;
+    border: 2px solid var(--paper);
+    box-shadow: 0 0 0 1px var(--ink);
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--ink);
+    cursor: pointer;
+    border: 2px solid var(--paper);
+    box-shadow: 0 0 0 1px var(--ink);
+  }
+
+  .tone-toggle, .shape-toggle { display: grid; gap: 6px; }
+  .tone-toggle { grid-template-columns: 1fr 1fr; }
+  .shape-toggle { grid-template-columns: 1fr 1fr 1fr; gap: 4px; }
+
+  .tone-btn, .shape-btn {
+    appearance: none;
+    background: transparent;
+    border: 0.5px solid var(--ink-40);
+    border-radius: 6px;
+    padding: 10px 8px;
+    font-family: var(--sans);
+    font-size: 11px;
+    cursor: pointer;
+    color: var(--ink-60);
+    transition: all 0.15s ease;
+  }
+
+  .tone-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .shape-btn {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 1px;
+    padding: 8px 4px;
+  }
+
+  .tone-btn:hover, .shape-btn:hover { border-color: var(--ink); color: var(--ink); }
+  .tone-btn.active, .shape-btn.active {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: #fff;
+  }
+
+  .tone-swatch { display: flex; gap: 2px; }
+  .tone-swatch span { width: 8px; height: 8px; border-radius: 50%; }
+
+  .canvas-area {
+    background: var(--paper);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  .canvas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--ink-60);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .canvas-header-coords { display: flex; gap: 16px; flex-wrap: wrap; }
+
+  .canvas-stage {
+    background: var(--surface);
+    border: 0.5px solid var(--ink-20);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    min-height: 480px;
+    padding: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .canvas-corner {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-color: var(--ink);
+    border-style: solid;
+    border-width: 0;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  .canvas-corner.tl { top: 8px; left: 8px; border-top-width: 0.5px; border-left-width: 0.5px; }
+  .canvas-corner.tr { top: 8px; right: 8px; border-top-width: 0.5px; border-right-width: 0.5px; }
+  .canvas-corner.bl { bottom: 8px; left: 8px; border-bottom-width: 0.5px; border-left-width: 0.5px; }
+  .canvas-corner.br { bottom: 8px; right: 8px; border-bottom-width: 0.5px; border-right-width: 0.5px; }
+
+  #render-canvas {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  .empty-state { text-align: center; padding: 40px 20px; }
+
+  .empty-cube {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 20px;
+    opacity: 0.6;
+  }
+
+  .empty-state h2 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    letter-spacing: -0.3px;
+  }
+
+  .empty-state p {
+    font-size: 13px;
+    color: var(--ink-60);
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  .empty-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--ink);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    font-family: var(--sans);
+  }
+
+  .empty-cta:hover { opacity: 0.85; }
+
+  .canvas-stage.drag-over::after {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border: 1px dashed var(--signal);
+    border-radius: 4px;
+    background: rgba(123,92,217,0.06);
+    pointer-events: none;
+  }
+
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    border-top: 0.5px solid var(--ink-20);
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--ink-60);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .footer-meta { display: flex; gap: 24px; flex-wrap: wrap; }
+
+  #file-input { display: none; }
+
+  .loading-overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.7);
+    z-index: 10;
+  }
+
+  .loading-overlay.active { display: flex; }
+
+  .loading-dots { display: flex; gap: 6px; }
+
+  .loading-dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--ink);
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+
+  .loading-dots span:nth-child(2) { animation-delay: 0.15s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.3s; }
+
+  @keyframes pulse {
+    0%, 80%, 100% { opacity: 0.2; transform: scale(0.85); }
+    40% { opacity: 1; transform: scale(1); }
+  }
+
+  @media (max-width: 760px) {
+    .main { grid-template-columns: 1fr; }
+    .sidebar { border-right: none; border-bottom: 0.5px solid var(--ink-20); }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <svg class="brand-cube" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="10,2 17,6 17,14 10,18 3,14 3,6" fill="none" stroke="#1a1a1a" stroke-width="1"/>
+      <line x1="3" y1="6" x2="10" y2="10" stroke="#1a1a1a" stroke-width="1"/>
+      <line x1="17" y1="6" x2="10" y2="10" stroke="#1a1a1a" stroke-width="1"/>
+      <line x1="10" y1="10" x2="10" y2="18" stroke="#1a1a1a" stroke-width="1"/>
+      <circle cx="10" cy="10" r="1.4" fill="#1a1a1a"/>
+    </svg>
+    <span class="brand-name">mws ai</span>
+    <span class="brand-divider"></span>
+    <span class="tool-name">HEX RENDER · v.02</span>
+  </div>
+  <div class="topbar-meta">
+    <span><span class="status-dot"></span>SIGNAL READY</span>
+  </div>
+</header>
+
+<div class="main">
+
+  <aside class="sidebar">
+
+    <section>
+      <div class="section-label"><span class="section-num">[01]</span> ИСТОЧНИК</div>
+      <div class="btn-group">
+        <button class="btn" id="btn-load" type="button">
+          <span class="btn-icon">
+            <svg width="8" height="8" viewBox="0 0 8 8"><path d="M4 1v6M1 4h6" stroke="#1a1a1a" stroke-width="1" stroke-linecap="round" fill="none"/></svg>
+          </span>
+          Загрузить изображение
+        </button>
+        <button class="btn btn-secondary" id="btn-paste" type="button">
+          <span class="btn-icon">
+            <svg width="8" height="8" viewBox="0 0 8 8"><rect x="2" y="1.5" width="4" height="5" stroke="#fff" stroke-width="0.8" fill="none"/></svg>
+          </span>
+          Вставить из буфера
+        </button>
+      </div>
+      <input type="file" id="file-input" accept="image/*">
+    </section>
+
+    <section>
+      <div class="section-label"><span class="section-num">[02]</span> ТОН</div>
+      <div class="tone-toggle">
+        <button class="tone-btn active" data-tone="mono" type="button">
+          <span class="tone-swatch"><span style="background:#101412"></span></span>
+          Графит
+        </button>
+        <button class="tone-btn" data-tone="signal" type="button">
+          <span class="tone-swatch"><span style="background:#7B5CD9"></span><span style="background:#5E3FBF"></span></span>
+          Сигнал
+        </button>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label"><span class="section-num">[03]</span> ПЛИТКА</div>
+      <p style="font-size: 11px; color: var(--ink-60); line-height: 1.45; margin-top: -4px;">Сетка из одного SVG-контура (pointy-top, скругления из path). Меняется только тон заливки — геометрия ячеек одинакова.</p>
+    </section>
+
+    <section class="control">
+      <div class="control-header">
+        <span class="control-label">Размер гексагона</span>
+        <span class="control-value" id="grid-value">18 px</span>
+      </div>
+      <input type="range" id="grid-size" min="8" max="42" step="1" value="18">
+    </section>
+
+    <section class="control">
+      <div class="control-header">
+        <span class="control-label">Заполнение ячейки</span>
+        <span class="control-value" id="element-value">0.92×</span>
+      </div>
+      <input type="range" id="element-size" min="0.72" max="1" step="0.02" value="0.92">
+    </section>
+
+    <section class="control">
+      <div class="control-header">
+        <span class="control-label">Контраст</span>
+        <span class="control-value" id="contrast-value">1.00</span>
+      </div>
+      <input type="range" id="contrast" min="0.5" max="2.5" step="0.05" value="1.0">
+    </section>
+
+    <section class="control">
+      <div class="control-header">
+        <span class="control-label">Плотность</span>
+        <span class="control-value" id="density-value">100%</span>
+      </div>
+      <input type="range" id="density" min="0.3" max="1.5" step="0.05" value="1.0">
+    </section>
+
+    <section>
+      <div class="section-label"><span class="section-num">[04]</span> ИНВЕРСИЯ</div>
+      <div class="tone-toggle" id="invert-toggle">
+        <button class="tone-btn active" data-invert="0" type="button">Оригинал</button>
+        <button class="tone-btn" data-invert="1" type="button">Инверсия</button>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label"><span class="section-num">[05]</span> ЭКСПОРТ</div>
+      <div class="btn-group">
+        <button class="btn btn-secondary" id="btn-png" type="button" disabled>
+          <span class="btn-icon">
+            <svg width="8" height="8" viewBox="0 0 8 8"><path d="M4 1v5M2 4l2 2 2-2" stroke="#fff" stroke-width="0.8" fill="none" stroke-linecap="round"/></svg>
+          </span>
+          Скачать PNG
+        </button>
+        <button class="btn btn-secondary" id="btn-svg" type="button" disabled>
+          <span class="btn-icon">
+            <svg width="8" height="8" viewBox="0 0 8 8"><path d="M4 1v5M2 4l2 2 2-2" stroke="#fff" stroke-width="0.8" fill="none" stroke-linecap="round"/></svg>
+          </span>
+          Скачать SVG
+        </button>
+      </div>
+    </section>
+
+  </aside>
+
+  <main class="canvas-area">
+    <div class="canvas-header">
+      <div class="canvas-header-coords">
+        <span>X: <span id="dim-x">—</span></span>
+        <span>Y: <span id="dim-y">—</span></span>
+        <span>POINTS: <span id="point-count">—</span></span>
+      </div>
+      <div><span id="output-label">OUTPUT / HEX.MONO</span></div>
+    </div>
+
+    <div class="canvas-stage" id="stage">
+      <div class="canvas-corner tl"></div>
+      <div class="canvas-corner tr"></div>
+      <div class="canvas-corner bl"></div>
+      <div class="canvas-corner br"></div>
+
+      <div class="empty-state" id="empty-state">
+        <svg class="empty-cube" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="28,4 50,16 50,40 28,52 6,40 6,16" fill="none" stroke="#1a1a1a" stroke-width="0.8"/>
+          <line x1="6" y1="16" x2="28" y2="28" stroke="#1a1a1a" stroke-width="0.8"/>
+          <line x1="50" y1="16" x2="28" y2="28" stroke="#1a1a1a" stroke-width="0.8"/>
+          <line x1="28" y1="28" x2="28" y2="52" stroke="#1a1a1a" stroke-width="0.8"/>
+          <circle cx="28" cy="28" r="2" fill="#1a1a1a"/>
+        </svg>
+        <h2>Перетащите изображение</h2>
+        <p>или нажмите кнопку, чтобы загрузить файл.<br>JPG, PNG, WEBP. Можно вставить из буфера (Ctrl+V).</p>
+        <button class="empty-cta" id="empty-load" type="button">
+          <svg width="10" height="10" viewBox="0 0 10 10"><path d="M5 1v8M1 5h8" stroke="#fff" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg>
+          Выбрать файл
+        </button>
+      </div>
+
+      <canvas id="render-canvas" style="display:none;"></canvas>
+
+      <div class="loading-overlay" id="loading">
+        <div class="loading-dots"><span></span><span></span><span></span></div>
+      </div>
+    </div>
+
+    <div class="canvas-header">
+      <div class="canvas-header-coords">
+        <span>SCENE 01</span>
+        <span id="source-name">— нет источника</span>
+      </div>
+      <div>MWS.AI / HEX-RENDER</div>
+    </div>
+  </main>
+
+</div>
+
+<footer class="footer">
+  <div>BRAND BOOK · APPLICATION TOOL</div>
+  <div class="footer-meta">
+    <span>HEX MOSAIC</span>
+    <span>RENDER LOCAL</span>
+    <span>v.01</span>
+  </div>
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  var SQRT3 = Math.sqrt(3);
+
+  /** Точный path из Figma (viewBox 194×174) */
+  var HEX_PATH_D = 'M135.358 0C142.504 0 149.106 3.81198 152.679 10L191.132 76.6025C194.704 82.7906 194.704 90.4145 191.132 96.6025L152.679 163.205C149.106 169.393 142.504 173.205 135.358 173.205L58.4523 173.205C51.307 173.205 44.7044 169.393 41.1318 163.205L2.67878 96.6025C-.893878 90.4145 -.893878 82.7906 2.67878 76.6025L41.1318 10C44.7044 3.81198 51.307 0 58.4523 0L135.358 0Z';
+  var HEX_PATH_CX = 96.9054;
+  var HEX_PATH_CY = 86.6025;
+  var HEX_PATH_HALF_H = 86.6025;
+  var hexPath2D = new Path2D(HEX_PATH_D);
+
+  var state = {
+    sourceImage: null,
+    tone: 'mono',
+    gridSize: 18,
+    elementSize: 0.92,
+    contrast: 1.0,
+    density: 1.0,
+    invert: false,
+    lastRender: null
+  };
+
+  function $(id) { return document.getElementById(id); }
+  var canvas = $('render-canvas');
+  var ctx = canvas.getContext('2d', { willReadFrequently: true });
+  var stage = $('stage');
+  var emptyState = $('empty-state');
+  var loading = $('loading');
+  var fileInput = $('file-input');
+  if (!ctx) {
+    alert('Ваш браузер не поддерживает Canvas 2D. Обновите браузер или попробуйте другой.');
+    return;
+  }
+
+  function showCanvas() {
+    emptyState.style.display = 'none';
+    canvas.style.display = 'block';
+    $('btn-png').disabled = false;
+    $('btn-svg').disabled = false;
+  }
+
+  function loadImageFromFile(file) {
+    if (!file || !file.type || file.type.indexOf('image/') !== 0) {
+      console.warn('Not an image file');
+      return;
+    }
+    $('source-name').textContent = file.name.toUpperCase().slice(0, 28);
+
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = new Image();
+      img.onload = function() {
+        state.sourceImage = img;
+        render();
+      };
+      img.onerror = function() {
+        alert('Не удалось загрузить изображение');
+      };
+      img.src = e.target.result;
+    };
+    reader.onerror = function() { alert('Ошибка чтения файла'); };
+    reader.readAsDataURL(file);
+  }
+
+  fileInput.addEventListener('change', function(e) {
+    if (e.target.files && e.target.files[0]) loadImageFromFile(e.target.files[0]);
+  });
+
+  $('btn-load').addEventListener('click', function() { fileInput.click(); });
+  $('empty-load').addEventListener('click', function() { fileInput.click(); });
+
+  $('btn-paste').addEventListener('click', function() {
+    if (!navigator.clipboard || !navigator.clipboard.read) {
+      alert('Ваш браузер не поддерживает чтение буфера обмена. Используйте Ctrl+V или загрузку файла.');
+      return;
+    }
+    navigator.clipboard.read().then(function(items) {
+      for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        for (var j = 0; j < item.types.length; j++) {
+          var type = item.types[j];
+          if (type.indexOf('image/') === 0) {
+            return item.getType(type).then(function(blob) {
+              loadImageFromFile(new File([blob], 'clipboard.png', { type: type }));
+            });
+          }
+        }
+      }
+      alert('В буфере обмена нет изображения');
+    }).catch(function() {
+      alert('Не удалось прочитать буфер обмена. Используйте Ctrl+V или загрузку файла.');
+    });
+  });
+
+  ['dragover', 'dragenter'].forEach(function(ev) {
+    stage.addEventListener(ev, function(e) {
+      e.preventDefault();
+      stage.classList.add('drag-over');
+    });
+  });
+  ['dragleave', 'drop'].forEach(function(ev) {
+    stage.addEventListener(ev, function(e) {
+      e.preventDefault();
+      stage.classList.remove('drag-over');
+    });
+  });
+  stage.addEventListener('drop', function(e) {
+    e.preventDefault();
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      loadImageFromFile(e.dataTransfer.files[0]);
+    }
+  });
+
+  document.addEventListener('paste', function(e) {
+    if (e.clipboardData && e.clipboardData.items) {
+      for (var i = 0; i < e.clipboardData.items.length; i++) {
+        var item = e.clipboardData.items[i];
+        if (item.type.indexOf('image/') === 0) {
+          var blob = item.getAsFile();
+          if (blob) {
+            loadImageFromFile(blob);
+            return;
+          }
+        }
+      }
+    }
+  });
+
+  $('grid-size').addEventListener('input', function(e) {
+    state.gridSize = parseInt(e.target.value, 10);
+    $('grid-value').textContent = state.gridSize + ' px';
+    debouncedRender();
+  });
+
+  $('element-size').addEventListener('input', function(e) {
+    state.elementSize = parseFloat(e.target.value);
+    $('element-value').textContent = state.elementSize.toFixed(2) + '×';
+    debouncedRender();
+  });
+
+  $('contrast').addEventListener('input', function(e) {
+    state.contrast = parseFloat(e.target.value);
+    $('contrast-value').textContent = state.contrast.toFixed(2);
+    debouncedRender();
+  });
+
+  $('density').addEventListener('input', function(e) {
+    state.density = parseFloat(e.target.value);
+    $('density-value').textContent = Math.round(state.density * 100) + '%';
+    debouncedRender();
+  });
+
+  function bindToggle(selector, onSelect) {
+    var nodes = document.querySelectorAll(selector);
+    for (var i = 0; i < nodes.length; i++) {
+      (function(btn) {
+        btn.addEventListener('click', function() {
+          for (var j = 0; j < nodes.length; j++) nodes[j].classList.remove('active');
+          btn.classList.add('active');
+          onSelect(btn);
+          render();
+        });
+      })(nodes[i]);
+    }
+  }
+
+  function updateOutputLabel() {
+    $('output-label').textContent = 'OUTPUT / HEX.' + state.tone.toUpperCase() + (state.invert ? ' / INV' : '');
+  }
+
+  bindToggle('.tone-btn[data-tone]', function(btn) {
+    state.tone = btn.dataset.tone;
+    updateOutputLabel();
+  });
+
+  bindToggle('.tone-btn[data-invert]', function(btn) {
+    state.invert = btn.dataset.invert === '1';
+    updateOutputLabel();
+  });
+
+  var renderTimer = null;
+  function debouncedRender() {
+    if (renderTimer) clearTimeout(renderTimer);
+    renderTimer = setTimeout(render, 80);
+  }
+
+  function render() {
+    if (!state.sourceImage) return;
+    showCanvas();
+    loading.classList.add('active');
+
+    (window.requestAnimationFrame || window.setTimeout)(function() {
+      try {
+        doRender();
+      } catch (err) {
+        console.error('Render error:', err);
+        alert('Ошибка рендеринга: ' + err.message);
+      }
+      loading.classList.remove('active');
+    }, 20);
+  }
+
+  function fmt(n) {
+    return (Math.round(n * 1000) / 1000).toString();
+  }
+
+  function fillHexCell(context, cx, cy, scale, color) {
+    context.save();
+    context.translate(cx, cy);
+    context.scale(scale, scale);
+    context.translate(-HEX_PATH_CX, -HEX_PATH_CY);
+    context.fillStyle = color;
+    context.fill(hexPath2D);
+    context.restore();
+  }
+
+  function sampleLum(data, w, h, cx, cy, radius) {
+    var r = Math.max(2, Math.floor(radius * 0.35));
+    var x0 = Math.max(0, Math.floor(cx - r));
+    var y0 = Math.max(0, Math.floor(cy - r));
+    var x1 = Math.min(w - 1, Math.ceil(cx + r));
+    var y1 = Math.min(h - 1, Math.ceil(cy + r));
+    var lumSum = 0;
+    var cnt = 0;
+    var step = Math.max(1, Math.floor(r / 2));
+    for (var y = y0; y <= y1; y += step) {
+      for (var x = x0; x <= x1; x += step) {
+        var ix = (y * w + x) * 4;
+        lumSum += (0.299 * data[ix] + 0.587 * data[ix + 1] + 0.114 * data[ix + 2]) / 255;
+        cnt++;
+      }
+    }
+    return cnt > 0 ? lumSum / cnt : 1;
+  }
+
+  function mixColorRgb(hex, amt) {
+    if (amt <= 0) return { r: 255, g: 255, b: 255 };
+    var n = hex.replace('#', '');
+    var r = parseInt(n.slice(0, 2), 16);
+    var g = parseInt(n.slice(2, 4), 16);
+    var b = parseInt(n.slice(4, 6), 16);
+    return {
+      r: Math.round(255 + (r - 255) * amt),
+      g: Math.round(255 + (g - 255) * amt),
+      b: Math.round(255 + (b - 255) * amt)
+    };
+  }
+
+  function rgbToHex(rgb) {
+    function h(x) {
+      var s = Math.max(0, Math.min(255, x)).toString(16);
+      return s.length === 1 ? '0' + s : s;
+    }
+    return '#' + h(rgb.r) + h(rgb.g) + h(rgb.b);
+  }
+
+  function doRender() {
+    var img = state.sourceImage;
+
+    var MAX_W = 1000;
+    var MAX_H = 800;
+    var aspect = img.width / img.height;
+    var outW, outH;
+    if (aspect >= MAX_W / MAX_H) {
+      outW = Math.min(MAX_W, img.width);
+      outH = outW / aspect;
+    } else {
+      outH = Math.min(MAX_H, img.height);
+      outW = outH * aspect;
+    }
+    outW = Math.round(outW);
+    outH = Math.round(outH);
+    if (!outW || !outH) throw new Error('Некорректные размеры изображения');
+
+    canvas.width = outW;
+    canvas.height = outH;
+    canvas.style.width = 'min(100%, ' + outW + 'px)';
+    canvas.style.height = 'auto';
+
+    var sample = document.createElement('canvas');
+    sample.width = outW;
+    sample.height = outH;
+    var sctx = sample.getContext('2d');
+    sctx.drawImage(img, 0, 0, outW, outH);
+    var data;
+    try {
+      data = sctx.getImageData(0, 0, outW, outH).data;
+    } catch (err) {
+      throw new Error('Не удалось прочитать пиксели изображения');
+    }
+
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, outW, outH);
+
+    var size = state.gridSize;
+    var fillScale = state.elementSize;
+    var contrast = state.contrast;
+    var density = state.density;
+
+    var hexScale = (size * fillScale) / HEX_PATH_HALF_H;
+    var hexExtent = HEX_PATH_HALF_H * hexScale;
+
+    var horiz = SQRT3 * size;
+    var vert = 1.5 * size;
+
+    var qMin = Math.floor(-2 - outW / horiz);
+    var qMax = Math.ceil(outW / horiz + 2);
+    var rMin = Math.floor(-2 - outH / vert);
+    var rMax = Math.ceil(outH / vert + 3);
+
+    var cells = [];
+    var cellCount = 0;
+
+    for (var q = qMin; q <= qMax; q++) {
+      for (var r = rMin; r <= rMax; r++) {
+        var hx = size * SQRT3 * (q + r / 2);
+        var hy = size * 1.5 * r;
+
+        if (hx < -hexExtent || hy < -hexExtent || hx > outW + hexExtent || hy > outH + hexExtent) {
+          continue;
+        }
+
+        var avg = sampleLum(data, outW, outH, hx, hy, hexExtent);
+        if (state.invert) avg = 1 - avg;
+
+        var v = (avg - 0.5) * contrast + 0.5;
+        if (v < 0) v = 0;
+        if (v > 1) v = 1;
+
+        var ink = (1 - v) * density;
+        if (ink < 0) ink = 0;
+        if (ink > 1) ink = 1;
+
+        var baseHex = state.tone === 'mono' ? '#101412' : (avg < 0.4 ? '#5E3FBF' : '#7B5CD9');
+        var rgb = mixColorRgb(baseHex, ink);
+        var color = rgbToHex(rgb);
+
+        fillHexCell(ctx, hx, hy, hexScale, color);
+
+        cellCount++;
+        cells.push({ cx: hx, cy: hy, color: color });
+      }
+    }
+
+    state.lastRender = {
+      width: outW,
+      height: outH,
+      hexScale: hexScale,
+      cells: cells
+    };
+
+    $('dim-x').textContent = outW;
+    $('dim-y').textContent = outH;
+    $('point-count').textContent = cellCount.toLocaleString('ru-RU');
+  }
+
+  $('btn-png').addEventListener('click', function() {
+    if (!state.sourceImage) return;
+    canvas.toBlob(function(blob) {
+      try {
+        if (!blob) throw new Error('Не удалось сформировать PNG');
+        var url = URL.createObjectURL(blob);
+        var link = document.createElement('a');
+        link.download = 'mws-ai-hexrender-' + state.tone + '-' + Date.now() + '.png';
+        link.href = url;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+      } catch (err) {
+        alert('Ошибка экспорта PNG: ' + err.message);
+      }
+    }, 'image/png');
+  });
+
+  $('btn-svg').addEventListener('click', function() {
+    if (!state.lastRender) return;
+    try {
+      var lr = state.lastRender;
+      var defs = '<defs><path id="hex-unit" d="' + HEX_PATH_D + '" transform="translate(' + fmt(-HEX_PATH_CX) + ',' + fmt(-HEX_PATH_CY) + ')"/></defs>';
+      var parts = [
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + lr.width + ' ' + lr.height + '" width="' + lr.width + '" height="' + lr.height + '">',
+        '<rect width="100%" height="100%" fill="#ffffff"/>',
+        defs
+      ];
+
+      for (var i = 0; i < lr.cells.length; i++) {
+        var c = lr.cells[i];
+        parts.push('<use href="#hex-unit" transform="translate(' + fmt(c.cx) + ',' + fmt(c.cy) + ') scale(' + fmt(lr.hexScale) + ')" fill="' + c.color + '"/>');
+      }
+      parts.push('</svg>');
+
+      var svgString = parts.join('');
+      var blob = new Blob([svgString], { type: 'image/svg+xml' });
+      var url = URL.createObjectURL(blob);
+      var link = document.createElement('a');
+      link.download = 'mws-ai-hexrender-' + state.tone + '-' + Date.now() + '.svg';
+      link.href = url;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+    } catch (err) {
+      alert('Ошибка экспорта SVG: ' + err.message);
+    }
+  });
+
+  state.gridSize = parseInt($('grid-size').value, 10);
+  state.elementSize = parseFloat($('element-size').value);
+  $('grid-value').textContent = state.gridSize + ' px';
+  $('element-value').textContent = state.elementSize.toFixed(2) + '×';
+
+  updateOutputLabel();
+  console.log('MWS AI Hex Render — initialized');
+})();
+</script>
+</body>
+</html>
