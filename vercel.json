@@ -1,9 +1,8 @@
 {
   "cleanUrls": true,
-  "trailingSlash": false,
   "rewrites": [
-    { "source": "/", "destination": "/index.html" },
-    { "source": "/hex-render", "destination": "/hex-render/index.html" },
-    { "source": "/hex-render/", "destination": "/hex-render/index.html" }
+    { "source": "/", "destination": "/hex-render/index.html" },
+    { "source": "/index.html", "destination": "/hex-render/index.html" },
+    { "source": "/hex.svg", "destination": "/hex-render/hex.svg" }
   ]
 }
